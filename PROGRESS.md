@@ -49,13 +49,17 @@
 - [x] State-managed `lastPIIByTab` cache for fast apply/remove loops.
 - [x] Popup UI integration for Apply/Clear Redactions.
 
-## Phase 5: Payload Schema & Validation - IN PROGRESS
-- [ ] Install Zod (`npm install zod`)
-- [ ] Centralize schemas in `src/types/schemas.ts`
-- [ ] Implement `safeParse()` at all runtime messaging boundaries
-- [ ] Pass strict `tsc` checking
+## Phase 5: Payload Schema & Validation - COMPLETE
+- [x] Install Zod (`npm install zod`)
+- [x] Centralize schemas in `src/types/schemas.ts`
+- [x] Implement `safeParse()` at all runtime messaging boundaries
+- [x] Pass strict `tsc` checking
 
-## Phase 6: Server Contract (FastAPI) - NOT STARTED
+## Phase 6: Server Contract (FastAPI) - IN PROGRESS
+- [ ] Scaffold the Backend Environment (FastAPI, Uvicorn, Pydantic)
+- [ ] Implement Pydantic Data Contracts matching Zod schemas
+- [ ] Create the FastAPI Application & configure CORS
+- [ ] Define API Endpoints (`/health`, `/api/v1/session/start`, `/api/v1/scan/pii`, `/api/v1/scan/vision`, `/api/v1/redact/verify`)
 ## Phase 7: VLM Integration (Gemini 1.5 Flash) - NOT STARTED
 ## Phase 8: Action Executor + Confirmation UI - NOT STARTED
 ## Phase 9: Benchmarking Harness — NOT STARTED
