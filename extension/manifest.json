@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Drishti \u2014 Privacy Vision Agent",
+  "version": "0.2.0",
+  "description": "Privacy-preserving browser vision agent. Detects and redacts sensitive data on-device before any network transmission.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "src/background/background.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://localhost/*", "*://127.0.0.1/*"],
+      "js": ["src/content-scripts/content.ts"],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  },
+  "action": {
+    "default_popup": "src/popup/index.html"
+  },
+  "options_page": "src/options/index.html",
+  "web_accessible_resources": [
+    {
+      "matches": ["<all_urls>"],
+      "resources": [
+        "wasm/*",
+        "mediapipe/*",
+        "models/*",
+        "test-assets/*"
+      ]
+    }
+  ]
+}

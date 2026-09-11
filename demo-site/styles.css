@@ -1,0 +1,305 @@
+:root {
+    --govt-navy: #1a237e;
+    --govt-blue: #0d47a1;
+    --govt-saffron: #FF9933;
+    --govt-green: #138808;
+    --text-main: #333333;
+    --bg-main: #f5f5f5;
+    --border-color: #cccccc;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+.top-stripe {
+    height: 4px;
+    background-color: var(--govt-saffron);
+    width: 100%;
+}
+
+.demo-badge {
+    position: fixed;
+    top: 20px;
+    right: -40px;
+    background: #d32f2f;
+    color: white;
+    padding: 5px 50px;
+    transform: rotate(45deg);
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.govt-header {
+    background-color: var(--govt-navy);
+    color: white;
+    padding: 20px 0;
+    border-bottom: 4px solid var(--govt-blue);
+}
+
+.header-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.emblem-container {
+    margin-right: 20px;
+    background: white;
+    padding: 10px;
+    border-radius: 50%;
+}
+
+.ashoka-chakra {
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--govt-navy);
+    border-radius: 50%;
+    position: relative;
+}
+.ashoka-chakra::before, .ashoka-chakra::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--govt-navy);
+}
+.ashoka-chakra::after {
+    transform: rotate(90deg);
+}
+
+.header-text h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.header-text h2 {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #e0e0e0;
+}
+
+.header-text h3 {
+    font-size: 14px;
+    color: #b0bec5;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: white;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--govt-blue);
+}
+
+.form-header h2 {
+    color: var(--govt-navy);
+    font-size: 20px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--govt-blue);
+    color: var(--govt-blue);
+    padding: 8px 15px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+.btn-outline:hover {
+    background: var(--govt-blue);
+    color: white;
+}
+
+.govt-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-section {
+    background: #f9f9f9;
+    padding: 25px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.form-row {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.half-width {
+    flex: 0 0 calc(50% - 15px);
+}
+
+.photo-upload-group {
+    flex: 0 0 200px;
+    align-items: center;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #444;
+}
+
+.required {
+    color: #d32f2f;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="email"],
+input[type="tel"],
+select,
+textarea {
+    padding: 10px;
+    border: 1px solid #999;
+    border-radius: 3px;
+    font-size: 14px;
+    background-color: #fafafa;
+    transition: border-color 0.3s;
+    width: 100%;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--govt-blue);
+    background-color: white;
+}
+
+.photo-preview-container {
+    width: 150px;
+    height: 180px;
+    border: 2px dashed #999;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eee;
+    overflow: hidden;
+}
+
+.photo-placeholder {
+    color: #999;
+    width: 40px;
+    height: 40px;
+}
+
+#photo-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+input[type="file"] {
+    font-size: 12px;
+    max-width: 150px;
+}
+
+.declaration-section {
+    background: #e3f2fd;
+    padding: 15px;
+    border: 1px solid #90caf9;
+    border-radius: 4px;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.checkbox-group input {
+    margin-top: 4px;
+}
+
+.checkbox-group label {
+    font-weight: normal;
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-submit {
+    background: var(--govt-blue);
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.btn-submit:hover {
+    background: var(--govt-navy);
+}
+
+.govt-footer {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-size: 13px;
+    border-top: 1px solid #ddd;
+    background: white;
+    margin-top: 40px;
+}
+
+/* Watermark */
+body::before {
+    content: 'DEMO';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 15vw;
+    color: rgba(0, 0, 0, 0.03);
+    pointer-events: none;
+    z-index: 0;
+}

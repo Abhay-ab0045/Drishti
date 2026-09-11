@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./popup.css" />
+  <title>Drishti</title>
+</head>
+<body>
+  <div class="status-strip">
+    <span id="status-dot" class="status-indicator"></span>
+    <span id="status-text" class="status-text">IDLE</span>
+    <span class="mode-indicator" id="mode-indicator">DOM_ONLY</span>
+  </div>
+  
+  <div class="main-content">
+    <button id="scan-btn" class="scan-btn">Initiate Scan</button>
+    <button id="vision-btn" class="scan-btn vision-btn">Vision Scan</button>
+    <button id="pii-btn" class="scan-btn pii-btn">PII Scan</button>
+    <button id="redact-btn" class="scan-btn redact-btn" disabled>Redact</button>
+    <button id="clear-btn" class="scan-btn clear-btn" style="display:none">Clear Redaction</button>
+    
+    <div id="results-section" class="results-section" style="display: none;">
+      <div class="metric-row">
+        <span class="metric-label">ELEMENTS</span>
+        <span id="element-count" class="metric-value">0</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">FORMS</span>
+        <span id="form-count" class="metric-value">0</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">MEDIA</span>
+        <span id="media-count" class="metric-value">0</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">LATENCY</span>
+        <span id="latency" class="metric-value">0ms</span>
+      </div>
+    </div>
+
+    <div id="vision-results" class="results-section" style="display: none;">
+      <div class="section-header">VISION DETECTIONS</div>
+      <div class="metric-row">
+        <span class="metric-label">FACES</span>
+        <span id="face-count" class="metric-value">0</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">BACKEND</span>
+        <span id="vision-backend" class="metric-value">—</span>
+      </div>
+      <div id="detection-list" class="detection-list"></div>
+    </div>
+
+    <div id="pii-results" class="results-section" style="display: none;">
+      <div class="section-header">PII DETECTIONS</div>
+      <div class="metric-row">
+        <span class="metric-label">TOTAL</span>
+        <span id="pii-count" class="metric-value">0</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">VISUAL</span>
+        <span id="pii-visual-status" class="metric-value">—</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">REDACTED</span>
+        <span id="redact-status" class="metric-value">—</span>
+      </div>
+      <div id="pii-visual-note" class="pii-visual-note" style="display: none;"></div>
+      <div id="pii-detection-list" class="detection-list"></div>
+    </div>
+    
+    <div id="error-section" class="error-section" style="display: none;">
+      <pre id="error-details" class="error-details"></pre>
+    </div>
+  </div>
+  
+  <div class="footer">v0.2.0</div>
+  
+  <script type="module" src="./popup.ts"></script>
+</body>
+</html>
