@@ -43,10 +43,20 @@
 - [ ] **OPEN — NOT YET CONFIRMED LIVE:** "No cached vision data" auto-trigger path (PII Scan before any Vision Scan). Code is implemented; independent live confirmation has not been run.
 - [ ] **OPEN — NOT YET DEMONSTRATED:** `PASSWORD_FIELD` and `CREDIT_CARD` detectors exist in code (DOM attribute + Luhn regex paths) but the demo test page has no matching fields. Implemented but no live positive case observed.
 
-## Phase 4: Redaction Engine — NOT STARTED
-## Phase 5: Payload Schema & Validation — NOT STARTED
-## Phase 6: Server Contract (FastAPI) — NOT STARTED
-## Phase 7: VLM Integration (Gemini 1.5 Flash) — NOT STARTED
-## Phase 8: Action Executor + Confirmation UI — NOT STARTED
+## Phase 4: Targeted Redaction Engine - COMPLETE
+- [x] Implemented reversible CSS obfuscation (color: transparent, background: #0d0d0d) for input fields and text nodes.
+- [x] Implemented non-destructive absolute-positioned Canvas overlay (redact-overlay) for images/videos.
+- [x] State-managed `lastPIIByTab` cache for fast apply/remove loops.
+- [x] Popup UI integration for Apply/Clear Redactions.
+
+## Phase 5: Payload Schema & Validation - IN PROGRESS
+- [ ] Install Zod (`npm install zod`)
+- [ ] Centralize schemas in `src/types/schemas.ts`
+- [ ] Implement `safeParse()` at all runtime messaging boundaries
+- [ ] Pass strict `tsc` checking
+
+## Phase 6: Server Contract (FastAPI) - NOT STARTED
+## Phase 7: VLM Integration (Gemini 1.5 Flash) - NOT STARTED
+## Phase 8: Action Executor + Confirmation UI - NOT STARTED
 ## Phase 9: Benchmarking Harness — NOT STARTED
 ## Phase 10: Visual Design Pass — NOT STARTED

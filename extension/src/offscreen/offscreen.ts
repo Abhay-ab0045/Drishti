@@ -264,11 +264,20 @@ async function initPipeline(): Promise<{
   }
 }
 
+import { OffscreenMessageSchema } from '../types/schemas';
+
 // ===== Port Listener (Long-lived connections) =====
 chrome.runtime.onConnect.addListener((port) => {
   if (port.name !== 'drishti-vision') return;
 
-  port.onMessage.addListener((msg: { action: string; imageParams?: { dataUrl: string } }) => {
+  port.onMessage.addListener((rawMsg: any) => {
+    const parsed = OffscreenMessageSchema.safeParse(rawMsg);
+    if (!parsed.success) {
+      console.warn('[Drishti:Offscreen] Invalid payload:', parsed.error);
+      port.postMessage({ success: false, error: 'Invalid payload' });
+      return;
+    }
+    const msg = parsed.data;
     console.log('[Drishti:Offscreen] Received via port:', msg.action);
 
     if (msg.action === 'INIT_PIPELINE') {

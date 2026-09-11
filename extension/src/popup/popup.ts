@@ -1,3 +1,4 @@
+import { MessageEnvelopeSchema } from '../types/schemas';
 
 const statusDot = document.getElementById('status-dot') as HTMLSpanElement;
 const statusText = document.getElementById('status-text') as HTMLSpanElement;
@@ -396,8 +397,14 @@ clearBtn.addEventListener('click', async () => {
 });
 
 // Get current state on popup open
-chrome.runtime.onMessage.addListener((message: { type?: string; payload?: { state?: string; detail?: string } }) => {
-  if (message?.type === 'STATE_UPDATE' && message.payload?.state) {
+chrome.runtime.onMessage.addListener((rawMessage: any) => {
+  const parsed = MessageEnvelopeSchema.safeParse(rawMessage);
+  if (!parsed.success) {
+    console.warn('[Drishti:Popup] Invalid payload:', parsed.error);
+    return;
+  }
+  const message = parsed.data;
+  if (message.type === 'STATE_UPDATE' && message.payload?.state) {
     setStatus(message.payload.state, message.payload.detail);
   }
 });
@@ -411,6 +418,8 @@ chrome.runtime.sendMessage({ type: 'GET_STATE' })
   .catch((err) => {
     console.error('[Drishti:Popup] Failed to get state:', err);
   });
+
+
 
 
 
