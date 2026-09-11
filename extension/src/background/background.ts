@@ -175,7 +175,6 @@ async function runVisionScan(tabId: number): Promise<{
 }
 
 import { aggregateDetections } from '../pii/detector-aggregate';
-import { PIIDetection } from '../pii/types';
 
 async function runPIIScan(tabId: number): Promise<{
   detections: PIIDetection[];
@@ -246,12 +245,22 @@ async function runPIIScan(tabId: number): Promise<{
   return { detections: finalDetections, counts, visualSource, visualError };
 }
 
+import { MessageEnvelopeSchema } from '../types/schemas';
+
 // ===== Message Listener =====
 
-chrome.runtime.onMessage.addListener((message: { type: string; tabId?: number }, _sender, sendResponse) => {
-  console.log('[Drishti:BG] Received message type:', message.type);
+chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) => {
+  const parsed = MessageEnvelopeSchema.safeParse(rawMessage);
   
   (async () => {
+    if (!parsed.success) {
+      console.warn('[Drishti:BG] Invalid payload:', parsed.error);
+      sendResponse({ success: false, error: `Invalid payload: ${parsed.error.message}` });
+      return;
+    }
+    const message = parsed.data;
+    console.log('[Drishti:BG] Received message type:', message.type);
+    
     try {
       if (message.type === 'TRIGGER_VISION_SCAN') {
         const tabId = message.tabId;
@@ -347,3 +356,4 @@ chrome.runtime.onMessage.addListener((message: { type: string; tabId?: number },
 });
 
 console.log('[Drishti:BG] Background service worker initialized (Phase 1 + Phase 2)');
+

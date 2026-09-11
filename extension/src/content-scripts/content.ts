@@ -150,8 +150,17 @@ function captureAllMedia(): ImagePayload[] {
 import { detectFromAttributes, detectFromTextNodes } from '../pii/detector-dom';
 import { applyRedactions, removeRedactions } from './redact';
 
-chrome.runtime.onMessage.addListener((message: { type: string }, _sender, sendResponse) => {
+import { MessageEnvelopeSchema } from '../types/schemas';
+
+chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) => {
   (async () => {
+    const parsed = MessageEnvelopeSchema.safeParse(rawMessage);
+    if (!parsed.success) {
+      console.warn('[Drishti:Content] Invalid payload:', parsed.error);
+      sendResponse({ success: false, error: 'Invalid payload' });
+      return;
+    }
+    const message = parsed.data;
     console.log('[Drishti:Content] Received message action:', message.type);
     
     // EXPLICIT IGNORE: Do not intercept background-bound scans
@@ -227,3 +236,4 @@ chrome.runtime.onMessage.addListener((message: { type: string }, _sender, sendRe
 });
 
 console.log('[Drishti] Content script loaded — DOM reader + image capture ready');
+
