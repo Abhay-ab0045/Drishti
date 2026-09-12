@@ -61,13 +61,18 @@
 - [x] Create the FastAPI Application & configure CORS
 - [x] Define API Endpoints (`/health`, `/api/v1/session/start`, `/api/v1/scan/pii`, `/api/v1/scan/vision`, `/api/v1/redact/verify`)
 
-## Phase 7: VLM Integration (Gemini) - IN PROGRESS
-- [ ] Add `google-genai`, `python-dotenv`, `pillow` to `requirements.txt`
-- [ ] Create `backend/.env.example` and `backend/.gitignore`
-- [ ] Create `backend/vlm_adapter.py` with `plan_next_action()` function
-- [ ] Define `ActionPlanRequest`, `ActionTarget`, `ActionPlanResponse` schemas
-- [ ] Add `POST /api/v1/plan/action` endpoint
-- [ ] Live verification: valid request returns ActionPlanResponse; missing key returns safe error
-## Phase 8: Action Executor + Confirmation UI - NOT STARTED
-## Phase 9: Benchmarking Harness — NOT STARTED
-## Phase 10: Visual Design Pass — NOT STARTED
+## Phase 7: VLM Integration (Gemini) - COMPLETE
+- [x] Add `google-genai`, `python-dotenv`, `pillow` to `requirements.txt`
+- [x] Create `backend/.env.example` and `backend/.gitignore`
+- [x] Create `backend/vlm_adapter.py` with `plan_next_action()` function
+- [x] Define `ActionPlanRequest`, `ActionTarget`, `ActionPlanResponse` schemas
+- [x] Add `POST /api/v1/plan/action` endpoint
+- [x] Live verification: valid request returns ActionPlanResponse; missing key returns safe error
+
+## Phase 8: Action Execution & Human-in-the-Loop UI Confirmation - IN PROGRESS
+- [ ] Implement floating HITL UI Overlay (`hitl-overlay.ts`)
+- [ ] Implement Action Execution Engine (`executor.ts`)
+- [ ] End-to-End Orchestration (Background to Content Script to Backend)
+- [ ] Verification on Demo Portal
+## Phase 9: Benchmarking Harness - NOT STARTED
+## Phase 10: Visual Design Pass - NOT STARTED

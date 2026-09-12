@@ -245,11 +245,11 @@ async function runPIIScan(tabId: number): Promise<{
   return { detections: finalDetections, counts, visualSource, visualError };
 }
 
-import { MessageEnvelopeSchema } from '../types/schemas';
+import { MessageEnvelopeSchema, ActionPlanResponse } from '../types/schemas';
 
 // ===== Message Listener =====
 
-chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((rawMessage: any, sender, sendResponse) => {
   const parsed = MessageEnvelopeSchema.safeParse(rawMessage);
   
   (async () => {
@@ -263,7 +263,7 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
     
     try {
       if (message.type === 'TRIGGER_VISION_SCAN') {
-        const tabId = message.tabId;
+        const tabId = sender.tab?.id || ('tabId' in message ? message.tabId : undefined);
         console.log('[Drishti:Background] Received TRIGGER_VISION_SCAN for tab:', tabId);
         if (!tabId) {
           sendResponse({ type: 'VISION_RESULT', success: false, error: 'No tabId provided' });
@@ -278,7 +278,7 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
         });
       }
       else if (message.type === 'TRIGGER_PII_SCAN') {
-        const tabId = message.tabId;
+        const tabId = sender.tab?.id || ('tabId' in message ? message.tabId : undefined);
         console.log('[Drishti:Background] Received TRIGGER_PII_SCAN for tab:', tabId);
         if (!tabId) {
           sendResponse({ type: 'PII_RESULT', success: false, error: 'No tabId provided' });
@@ -302,7 +302,7 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
         sendResponse({ type: 'STATE_UPDATE', payload: { state: currentState } });
       }
       else if (message.type === 'TRIGGER_REDACTION') {
-        const tabId = message.tabId;
+        const tabId = sender.tab?.id || ('tabId' in message ? message.tabId : undefined);
         if (!tabId) {
           sendResponse({ success: false, error: 'No tabId provided' });
           return;
@@ -331,7 +331,7 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
         sendResponse({ success: true, fromCache, ...redactResponse });
       }
       else if (message.type === 'TRIGGER_REMOVE_REDACTION') {
-        const tabId = message.tabId;
+        const tabId = sender.tab?.id || ('tabId' in message ? message.tabId : undefined);
         if (!tabId) {
           sendResponse({ success: false, error: 'No tabId provided' });
           return;
@@ -340,6 +340,42 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
         const response = await chrome.tabs.sendMessage(tabId, { type: 'REMOVE_REDACTIONS' });
         setState('IDLE');
         sendResponse({ success: response?.success ?? true });
+      }
+      else if (message.type === 'TRIGGER_AGENT_CYCLE') {
+        const tabId = sender.tab?.id || ('tabId' in message ? message.tabId : undefined);
+        if (!tabId) {
+          sendResponse({ success: false, error: 'No tabId provided' });
+          return;
+        }
+        
+        setState('DETECTING', 'Capturing screen and calling VLM...');
+        
+        // Brief wait to ensure UI updates are painted
+        await new Promise(r => setTimeout(r, 100));
+        
+        const dataUrl = await chrome.tabs.captureVisibleTab(
+          chrome.windows.WINDOW_ID_CURRENT,
+          { format: 'jpeg', quality: 85 }
+        );
+        
+        const base64Image = dataUrl.split(',')[1];
+        
+        const apiResponse = await fetch('http://127.0.0.1:8000/api/v1/plan/action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            image_base64: base64Image,
+            task_goal: message.task_goal
+          })
+        });
+
+        if (!apiResponse.ok) {
+          throw new Error(`API error: ${apiResponse.statusText}`);
+        }
+
+        const plan = await apiResponse.json();
+        setState('COMPLETE', 'Action plan ready');
+        sendResponse({ success: true, plan });
       }
     } catch (err) {
       console.error('[Drishti:BG] Async listener error handling message:', message.type, err);
@@ -356,4 +392,5 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
 });
 
 console.log('[Drishti:BG] Background service worker initialized (Phase 1 + Phase 2)');
+
 
