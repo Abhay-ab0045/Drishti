@@ -35,3 +35,11 @@ Desktop.ini
 .idea/
 *.suo
 *.user
+
+# Temporary automation & scratch files
+temp_*
+*.tmp
+*.txt.tmp
+update_*.py
+fix_*.py
+write_*.py
