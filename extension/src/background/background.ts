@@ -181,11 +181,15 @@ async function runPIIScan(tabId: number): Promise<{
   counts: Record<string, number>;
   visualSource: 'cached' | 'fresh' | 'unavailable';
   visualError?: string;
+  dom_scan_ms?: number;
+  vision_inference_ms?: number;
 }> {
   setState('DETECTING', 'Running PII detection...');
 
   // 1. Get DOM & Regex detections + Label Boxes from content script
+  const t0_dom = performance.now();
   const contentResult: any = await chrome.tabs.sendMessage(tabId, { type: 'RUN_PII_DETECTION' });
+  const dom_scan_ms = performance.now() - t0_dom;
   if (!contentResult?.success) {
     throw new Error(contentResult?.error || 'Content script PII detection failed');
   }
@@ -193,6 +197,7 @@ async function runPIIScan(tabId: number): Promise<{
   // 2. Visual detections: reuse last Vision Scan for this tab, otherwise auto-run Phase 2
   let visualSource: 'cached' | 'fresh' | 'unavailable' = 'fresh';
   let visualError: string | undefined;
+  let vision_inference_ms = 0;
   let visionDetections: Array<{ type: string; boundingBox: [number, number, number, number]; confidence: number }> = [];
 
   const cached = lastVisionByTab.get(tabId);
@@ -203,7 +208,10 @@ async function runPIIScan(tabId: number): Promise<{
   } else {
     setState('DETECTING', 'No cached vision data — running vision scan...');
     try {
+      const t0_vis = performance.now();
       const visionResult = await runVisionScan(tabId);
+      vision_inference_ms = performance.now() - t0_vis;
+      
       visualSource = 'fresh';
       visionDetections = visionResult.detections;
     } catch (err) {
@@ -242,10 +250,11 @@ async function runPIIScan(tabId: number): Promise<{
   // Cache for TRIGGER_REDACTION so it doesn't need to re-run the pipeline
   lastPIIByTab.set(tabId, finalDetections);
 
-  return { detections: finalDetections, counts, visualSource, visualError };
+  return { detections: finalDetections, counts, visualSource, visualError, dom_scan_ms, vision_inference_ms };
 }
 
 import { MessageEnvelopeSchema, ActionPlanResponse } from '../types/schemas';
+import { TelemetryTracker } from './telemetry';
 
 // ===== Message Listener =====
 
@@ -292,6 +301,7 @@ chrome.runtime.onMessage.addListener((rawMessage: any, sender, sendResponse) => 
           counts: result.counts,
           visualSource: result.visualSource,
           visualError: result.visualError,
+          telemetry: { dom_scan_ms: result.dom_scan_ms, vision_inference_ms: result.vision_inference_ms },
         });
       }
       else if (message.type === 'INIT_VISION') {
@@ -348,18 +358,27 @@ chrome.runtime.onMessage.addListener((rawMessage: any, sender, sendResponse) => 
           return;
         }
         
+        const tracker = new TelemetryTracker();
+        const incomingTelemetry = (message as any).telemetry || {};
+        tracker.setDuration('dom_scan_ms', incomingTelemetry.dom_scan_ms || 0);
+        tracker.setDuration('vision_inference_ms', incomingTelemetry.vision_inference_ms || 0);
+        tracker.setDuration('redaction_paint_ms', incomingTelemetry.redaction_paint_ms || 0);
+
         setState('DETECTING', 'Capturing screen and calling VLM...');
         
         // Brief wait to ensure UI updates are painted
         await new Promise(r => setTimeout(r, 100));
         
+        tracker.start('screenshot_capture_ms');
         const dataUrl = await chrome.tabs.captureVisibleTab(
           chrome.windows.WINDOW_ID_CURRENT,
           { format: 'jpeg', quality: 85 }
         );
+        tracker.stop('screenshot_capture_ms');
         
         const base64Image = dataUrl.split(',')[1];
         
+        tracker.start('vlm_roundtrip_ms');
         const apiResponse = await fetch('http://127.0.0.1:8000/api/v1/plan/action', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -374,6 +393,10 @@ chrome.runtime.onMessage.addListener((rawMessage: any, sender, sendResponse) => 
         }
 
         const plan = await apiResponse.json();
+        tracker.stop('vlm_roundtrip_ms');
+        
+        await tracker.finalizeAndSave();
+
         setState('COMPLETE', 'Action plan ready');
         sendResponse({ success: true, plan });
       }

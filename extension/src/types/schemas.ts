@@ -68,7 +68,7 @@ export const MessageEnvelopeSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('TRIGGER_PII_SCAN'), tabId: z.number().optional() }),
   z.object({ type: z.literal('TRIGGER_REDACTION'), tabId: z.number().optional() }),
   z.object({ type: z.literal('TRIGGER_REMOVE_REDACTION'), tabId: z.number().optional() }),
-  z.object({ type: z.literal('TRIGGER_AGENT_CYCLE'), tabId: z.number().optional(), task_goal: z.string() }),
+  z.object({ type: z.literal('TRIGGER_AGENT_CYCLE'), tabId: z.number().optional(), task_goal: z.string(), telemetry: z.any().optional() }),
   z.object({ type: z.literal('INIT_VISION') }),
   z.object({ type: z.literal('GET_STATE') }),
   

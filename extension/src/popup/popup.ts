@@ -463,3 +463,56 @@ agentBtn.addEventListener('click', () => {
   });
 });
 
+
+
+const telemetryBtn = document.getElementById('telemetry-btn') as HTMLButtonElement;
+const telemetryResults = document.getElementById('telemetry-results') as HTMLDivElement;
+const telDom = document.getElementById('tel-dom') as HTMLSpanElement;
+const telVision = document.getElementById('tel-vision') as HTMLSpanElement;
+const telRedact = document.getElementById('tel-redact') as HTMLSpanElement;
+const telCapture = document.getElementById('tel-capture') as HTMLSpanElement;
+const telVlm = document.getElementById('tel-vlm') as HTMLSpanElement;
+const telTotal = document.getElementById('tel-total') as HTMLSpanElement;
+
+async function renderTelemetry() {
+  const data = await chrome.storage.local.get('drishti_last_telemetry');
+  const report = data.drishti_last_telemetry;
+  if (report) {
+    telDom.textContent = `${Math.round(report.dom_scan_ms)}ms`;
+    telVision.textContent = `${Math.round(report.vision_inference_ms)}ms`;
+    telRedact.textContent = `${Math.round(report.redaction_paint_ms)}ms`;
+    telCapture.textContent = `${Math.round(report.screenshot_capture_ms)}ms`;
+    telVlm.textContent = `${Math.round(report.vlm_roundtrip_ms)}ms`;
+    telTotal.textContent = `${(report.total_latency_ms / 1000).toFixed(2)}s`;
+  } else {
+    telDom.textContent = '-';
+    telVision.textContent = '-';
+    telRedact.textContent = '-';
+    telCapture.textContent = '-';
+    telVlm.textContent = '-';
+    telTotal.textContent = '-';
+  }
+}
+
+// Initial render
+renderTelemetry();
+
+// Toggle logic
+telemetryBtn.addEventListener('click', async () => {
+  const isHidden = telemetryResults.style.display === 'none';
+  if (isHidden) {
+    await renderTelemetry();
+    telemetryResults.style.display = 'block';
+    telemetryBtn.textContent = 'Hide Telemetry';
+  } else {
+    telemetryResults.style.display = 'none';
+    telemetryBtn.textContent = 'View Telemetry';
+  }
+});
+
+// Live updates
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.drishti_last_telemetry) {
+    renderTelemetry();
+  }
+});

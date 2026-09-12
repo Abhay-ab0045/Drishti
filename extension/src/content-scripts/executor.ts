@@ -69,14 +69,22 @@ export async function executeApprovedAction(plan: ActionPlanResponse): Promise<v
       
       if (plan.value === '[USER_INPUT_REQUIRED]') {
         el.focus();
-        el.classList.add('drishti-pulse-active');
-        const removePulse = () => {
-          el.classList.remove('drishti-pulse-active');
-          el.removeEventListener('input', removePulse);
-          el.removeEventListener('blur', removePulse);
+        
+        // Inline styles per instruction
+        const originalBoxShadow = el.style.boxShadow;
+        const originalTransition = el.style.transition;
+        
+        el.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.8)';
+        el.style.transition = 'box-shadow 0.3s ease';
+        
+        const removeHighlight = () => {
+          el.style.boxShadow = originalBoxShadow;
+          el.style.transition = originalTransition;
+          el.removeEventListener('input', removeHighlight);
+          el.removeEventListener('blur', removeHighlight);
         };
-        el.addEventListener('input', removePulse);
-        el.addEventListener('blur', removePulse);
+        el.addEventListener('input', removeHighlight);
+        el.addEventListener('blur', removeHighlight);
       } else if (plan.value) {
         el.value = plan.value;
         el.dispatchEvent(new Event('input', { bubbles: true }));

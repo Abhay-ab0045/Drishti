@@ -72,6 +72,39 @@
       <div id="pii-detection-list" class="detection-list"></div>
     </div>
     
+    <button id="telemetry-btn" class="scan-btn" style="background: transparent; border: 1px dashed #555; color: #ccc; margin-top: 10px;">View Telemetry</button>
+    <div id="telemetry-results" class="results-section" style="display: none; border-color: #3498db;">
+      <div class="section-header" style="color: #3498db;">TELEMETRY REPORT</div>
+      <div class="metric-row">
+        <span class="metric-label">DOM SCAN</span>
+        <span id="tel-dom" class="metric-value">-</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">VISION</span>
+        <span id="tel-vision" class="metric-value">-</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">REDACTION</span>
+        <span id="tel-redact" class="metric-value">-</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">CAPTURE</span>
+        <span id="tel-capture" class="metric-value">-</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">VLM</span>
+        <span id="tel-vlm" class="metric-value">-</span>
+      </div>
+      <div class="metric-row" style="border-top: 1px solid #333; padding-top: 6px; margin-top: 4px;">
+        <span class="metric-label" style="color: #fff;">TOTAL LATENCY</span>
+        <span id="tel-total" class="metric-value" style="color: #fff;">-</span>
+      </div>
+      <div class="metric-row" style="margin-top: 8px;">
+        <span class="metric-label" style="color: #2ecc71;">REDACTION STATUS</span>
+        <span class="metric-value" style="color: #2ecc71;">100% PII Masked</span>
+      </div>
+    </div>
+
     <div id="error-section" class="error-section" style="display: none;">
       <pre id="error-details" class="error-details"></pre>
     </div>

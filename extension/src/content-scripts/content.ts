@@ -234,13 +234,30 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
     else if (message.type === 'RUN_AGENT_CYCLE') {
       try {
         console.log('[Drishti:Content] Starting agent cycle...');
+        
+        // 1. Force a fresh Vision Scan
+        const t0_vis = performance.now();
+        await chrome.runtime.sendMessage({ type: 'TRIGGER_VISION_SCAN' });
+        const vision_inference_ms = performance.now() - t0_vis;
+
+        // 2. DOM / PII Scan (will reuse the vision cache we just populated)
+        const t0_dom = performance.now();
         const piiResponse = await chrome.runtime.sendMessage({ type: 'TRIGGER_PII_SCAN' });
+        const dom_scan_ms = piiResponse?.telemetry?.dom_scan_ms || (performance.now() - t0_dom);
+
+        // 3. Redaction Paint
+        const t1_redact = performance.now();
         if (piiResponse && piiResponse.success) {
           applyRedactions(piiResponse.detections);
         }
+        // Await next animation frame to measure true paint time
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        const redaction_paint_ms = performance.now() - t1_redact;
+
         const planResponse = await chrome.runtime.sendMessage({ 
           type: 'TRIGGER_AGENT_CYCLE',
-          task_goal: (message as any).task_goal 
+          task_goal: (message as any).task_goal,
+          telemetry: { dom_scan_ms, vision_inference_ms, redaction_paint_ms }
         });
         if (!planResponse || !planResponse.success) {
           throw new Error(planResponse?.error || 'Failed to get action plan');
