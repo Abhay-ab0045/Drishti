@@ -32,7 +32,7 @@ function ensureStyles(): void {
     '  user-select: none;',
     '}',
     '.' + OVERLAY_CLASS + ' {',
-    '  position: fixed;',
+    '  position: absolute;',
     '  background: #0d0d0d;',
     '  z-index: 2147483647;',
     '  pointer-events: none;',
@@ -90,8 +90,8 @@ function redactBoundingBox(box: [number, number, number, number]): void {
   const div = document.createElement('div');
   div.className = OVERLAY_CLASS;
   div.setAttribute(REDACT_ATTR, 'overlay');
-  div.style.left   = Math.round(x) + 'px';
-  div.style.top    = Math.round(y) + 'px';
+  div.style.left   = Math.round(x + window.scrollX) + 'px';
+  div.style.top    = Math.round(y + window.scrollY) + 'px';
   div.style.width  = Math.ceil(w) + 'px';
   div.style.height = Math.ceil(h) + 'px';
   document.body.appendChild(div);
