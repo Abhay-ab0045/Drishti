@@ -473,6 +473,8 @@ const telRedact = document.getElementById('tel-redact') as HTMLSpanElement;
 const telCapture = document.getElementById('tel-capture') as HTMLSpanElement;
 const telVlm = document.getElementById('tel-vlm') as HTMLSpanElement;
 const telTotal = document.getElementById('tel-total') as HTMLSpanElement;
+const telRedactStatusLabel = document.getElementById('tel-redact-status-label') as HTMLSpanElement;
+const telRedactStatusVal = document.getElementById('tel-redact-status-val') as HTMLSpanElement;
 
 async function renderTelemetry() {
   const data = await chrome.storage.local.get('drishti_last_telemetry');
@@ -484,6 +486,23 @@ async function renderTelemetry() {
     telCapture.textContent = `${Math.round(report.screenshot_capture_ms)}ms`;
     telVlm.textContent = `${Math.round(report.vlm_roundtrip_ms)}ms`;
     telTotal.textContent = `${(report.total_latency_ms / 1000).toFixed(2)}s`;
+    
+    if (report.pii_detected_count === 0) {
+      telRedactStatusVal.textContent = 'No PII detected';
+      telRedactStatusLabel.style.color = '#3498db';
+      telRedactStatusVal.style.color = '#3498db';
+    } else {
+      const pct = Math.round(report.redaction_completeness_pct);
+      telRedactStatusVal.textContent = `${pct}% PII Masked (${report.pii_redacted_count}/${report.pii_detected_count})`;
+      
+      if (pct === 100) {
+        telRedactStatusLabel.style.color = '#2ecc71'; // Green
+        telRedactStatusVal.style.color = '#2ecc71';
+      } else {
+        telRedactStatusLabel.style.color = '#e74c3c'; // Red
+        telRedactStatusVal.style.color = '#e74c3c';
+      }
+    }
   } else {
     telDom.textContent = '-';
     telVision.textContent = '-';
@@ -491,6 +510,9 @@ async function renderTelemetry() {
     telCapture.textContent = '-';
     telVlm.textContent = '-';
     telTotal.textContent = '-';
+    telRedactStatusVal.textContent = '-';
+    telRedactStatusLabel.style.color = '#2ecc71';
+    telRedactStatusVal.style.color = '#2ecc71';
   }
 }
 

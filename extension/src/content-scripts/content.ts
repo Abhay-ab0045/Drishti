@@ -247,9 +247,15 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
 
         // 3. Redaction Paint
         const t1_redact = performance.now();
+        let pii_detected_count = 0;
+        let pii_redacted_count = 0;
+        
         if (piiResponse && piiResponse.success) {
-          applyRedactions(piiResponse.detections);
+          pii_detected_count = piiResponse.detections.length;
+          const summary = applyRedactions(piiResponse.detections);
+          pii_redacted_count = summary.total;
         }
+        
         // Await next animation frame to measure true paint time
         await new Promise(resolve => requestAnimationFrame(resolve));
         const redaction_paint_ms = performance.now() - t1_redact;
@@ -257,7 +263,7 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
         const planResponse = await chrome.runtime.sendMessage({ 
           type: 'TRIGGER_AGENT_CYCLE',
           task_goal: (message as any).task_goal,
-          telemetry: { dom_scan_ms, vision_inference_ms, redaction_paint_ms }
+          telemetry: { dom_scan_ms, vision_inference_ms, redaction_paint_ms, pii_detected_count, pii_redacted_count }
         });
         if (!planResponse || !planResponse.success) {
           throw new Error(planResponse?.error || 'Failed to get action plan');

@@ -363,6 +363,7 @@ chrome.runtime.onMessage.addListener((rawMessage: any, sender, sendResponse) => 
         tracker.setDuration('dom_scan_ms', incomingTelemetry.dom_scan_ms || 0);
         tracker.setDuration('vision_inference_ms', incomingTelemetry.vision_inference_ms || 0);
         tracker.setDuration('redaction_paint_ms', incomingTelemetry.redaction_paint_ms || 0);
+        tracker.setCounts(incomingTelemetry.pii_detected_count || 0, incomingTelemetry.pii_redacted_count || 0);
 
         setState('DETECTING', 'Capturing screen and calling VLM...');
         
