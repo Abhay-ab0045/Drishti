@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -15,6 +15,7 @@
   </div>
   
   <div class="main-content">
+    <button id="agent-btn" class="scan-btn" style="background: #e67e22; border-color: #d35400;">Run Agent Cycle</button>
     <button id="scan-btn" class="scan-btn">Initiate Scan</button>
     <button id="vision-btn" class="scan-btn vision-btn">Vision Scan</button>
     <button id="pii-btn" class="scan-btn pii-btn">PII Scan</button>
@@ -48,7 +49,7 @@
       </div>
       <div class="metric-row">
         <span class="metric-label">BACKEND</span>
-        <span id="vision-backend" class="metric-value">—</span>
+        <span id="vision-backend" class="metric-value">-</span>
       </div>
       <div id="detection-list" class="detection-list"></div>
     </div>
@@ -61,11 +62,11 @@
       </div>
       <div class="metric-row">
         <span class="metric-label">VISUAL</span>
-        <span id="pii-visual-status" class="metric-value">—</span>
+        <span id="pii-visual-status" class="metric-value">-</span>
       </div>
       <div class="metric-row">
         <span class="metric-label">REDACTED</span>
-        <span id="redact-status" class="metric-value">—</span>
+        <span id="redact-status" class="metric-value">-</span>
       </div>
       <div id="pii-visual-note" class="pii-visual-note" style="display: none;"></div>
       <div id="pii-detection-list" class="detection-list"></div>

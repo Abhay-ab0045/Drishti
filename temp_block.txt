@@ -1,0 +1,36 @@
+﻿    else if (message.type === 'REMOVE_REDACTIONS') {
+      console.log('[Drishti:Content] Received REMOVE_REDACTIONS');
+      try {
+        removeRedactions();
+        sendResponse({ success: true });
+      } catch (error) {
+        console.error('[Drishti:Content] removeRedactions failed:', error);
+        sendResponse({ success: false, error: String(error) });
+      }
+    }
+    else if (message.type === 'TRIGGER_AGENT_CYCLE_CONTENT') {
+      try {
+        console.log('[Drishti:Content] Starting agent cycle...');
+        const piiResponse = await chrome.runtime.sendMessage({ type: 'TRIGGER_PII_SCAN' });
+        if (piiResponse && piiResponse.success) {
+          applyRedactions(piiResponse.detections);
+        }
+        const planResponse = await chrome.runtime.sendMessage({ 
+          type: 'TRIGGER_AGENT_CYCLE',
+          task_goal: (message as any).task_goal 
+        });
+        if (!planResponse || !planResponse.success) {
+          throw new Error(planResponse?.error || 'Failed to get action plan');
+        }
+        const approved = await showHITLOverlay(planResponse.plan);
+        removeRedactions();
+        if (approved) {
+          await executeApprovedAction(planResponse.plan);
+        }
+        sendResponse({ success: true, approved });
+      } catch (e) {
+        removeRedactions();
+        console.error('[Drishti:Content] Agent cycle error:', e);
+        sendResponse({ success: false, error: e instanceof Error ? e.message : String(e) });
+      }
+    }

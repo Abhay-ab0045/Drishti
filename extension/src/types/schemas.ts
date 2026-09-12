@@ -1,4 +1,4 @@
-﻿import { z } from 'zod';
+import { z } from 'zod';
 
 // ===== Vision Detection Schema =====
 export const VisionDetectionSchema = z.object({
@@ -38,6 +38,21 @@ export const RedactionPayloadSchema = z.object({
 
 export type RedactionPayload = z.infer<typeof RedactionPayloadSchema>;
 
+// ===== Action Plan Schemas =====
+export const ActionTargetSchema = z.object({
+  selector: z.string().nullable().optional(),
+  text_hint: z.string().nullable().optional(),
+});
+
+export const ActionPlanResponseSchema = z.object({
+  action: z.enum(['click', 'type', 'scroll', 'navigate', 'wait', 'respond']),
+  target: ActionTargetSchema.nullable().optional(),
+  value: z.string().nullable().optional(),
+  confidence: z.number().min(0).max(1),
+  reasoning: z.string()
+});
+export type ActionPlanResponse = z.infer<typeof ActionPlanResponseSchema>;
+
 // ===== Message Envelope Schema =====
 export const MessageEnvelopeSchema = z.discriminatedUnion('type', [
   // Content Script actions
@@ -46,12 +61,14 @@ export const MessageEnvelopeSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('RUN_PII_DETECTION') }),
   z.object({ type: z.literal('APPLY_REDACTIONS'), detections: z.array(PIIDetectionSchema) }),
   z.object({ type: z.literal('REMOVE_REDACTIONS') }),
+  z.object({ type: z.literal('RUN_AGENT_CYCLE'), task_goal: z.string() }),
 
   // Background actions
   z.object({ type: z.literal('TRIGGER_VISION_SCAN'), tabId: z.number().optional() }),
   z.object({ type: z.literal('TRIGGER_PII_SCAN'), tabId: z.number().optional() }),
   z.object({ type: z.literal('TRIGGER_REDACTION'), tabId: z.number().optional() }),
   z.object({ type: z.literal('TRIGGER_REMOVE_REDACTION'), tabId: z.number().optional() }),
+  z.object({ type: z.literal('TRIGGER_AGENT_CYCLE'), tabId: z.number().optional(), task_goal: z.string() }),
   z.object({ type: z.literal('INIT_VISION') }),
   z.object({ type: z.literal('GET_STATE') }),
   

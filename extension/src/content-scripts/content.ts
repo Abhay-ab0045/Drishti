@@ -149,6 +149,8 @@ function captureAllMedia(): ImagePayload[] {
 
 import { detectFromAttributes, detectFromTextNodes } from '../pii/detector-dom';
 import { applyRedactions, removeRedactions } from './redact';
+import { showHITLOverlay } from './hitl-overlay';
+import { executeApprovedAction } from './executor';
 
 import { MessageEnvelopeSchema } from '../types/schemas';
 
@@ -229,6 +231,32 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
         sendResponse({ success: false, error: String(error) });
       }
     }
+    else if (message.type === 'RUN_AGENT_CYCLE') {
+      try {
+        console.log('[Drishti:Content] Starting agent cycle...');
+        const piiResponse = await chrome.runtime.sendMessage({ type: 'TRIGGER_PII_SCAN' });
+        if (piiResponse && piiResponse.success) {
+          applyRedactions(piiResponse.detections);
+        }
+        const planResponse = await chrome.runtime.sendMessage({ 
+          type: 'TRIGGER_AGENT_CYCLE',
+          task_goal: (message as any).task_goal 
+        });
+        if (!planResponse || !planResponse.success) {
+          throw new Error(planResponse?.error || 'Failed to get action plan');
+        }
+        const approved = await showHITLOverlay(planResponse.plan);
+        removeRedactions();
+        if (approved) {
+          await executeApprovedAction(planResponse.plan);
+        }
+        sendResponse({ success: true, approved });
+      } catch (e) {
+        removeRedactions();
+        console.error('[Drishti:Content] Agent cycle error:', e);
+        sendResponse({ success: false, error: e instanceof Error ? e.message : String(e) });
+      }
+    }
   })();
 
   // CRITICAL: Always return true synchronously to keep the message channel open
@@ -236,4 +264,7 @@ chrome.runtime.onMessage.addListener((rawMessage: any, _sender, sendResponse) =>
 });
 
 console.log('[Drishti] Content script loaded — DOM reader + image capture ready');
+
+
+
 
