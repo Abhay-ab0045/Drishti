@@ -1,5 +1,5 @@
-﻿from pydantic import BaseModel, Field
-from typing import List, Tuple, Union, Literal
+from pydantic import BaseModel, Field
+from typing import List, Tuple, Union, Literal, Optional
 
 class VisionDetection(BaseModel):
     type: str
@@ -37,3 +37,22 @@ class SessionStartRequest(BaseModel):
 class SessionStartResponse(BaseModel):
     sessionId: str
     status: str
+
+# ===== Phase 7: VLM Action Planning =====
+
+class ActionPlanRequest(BaseModel):
+    image_base64: str
+    task_goal: str
+    context_url: Optional[str] = None
+
+class ActionTarget(BaseModel):
+    selector: Optional[str] = None
+    text_hint: Optional[str] = None
+
+class ActionPlanResponse(BaseModel):
+    action: Literal["click", "type", "scroll", "navigate", "wait", "respond"]
+    target: Optional[ActionTarget] = None
+    value: Optional[str] = None
+    confidence: float = Field(ge=0.0, le=1.0)
+    reasoning: str
+

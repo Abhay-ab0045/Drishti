@@ -1,0 +1,31 @@
+﻿# Environment secrets & local config
+.env
+.env.*
+!.env.example
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs & temp files
+*.log
+tmp/
+temp/
+
+# Editor & OS settings
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

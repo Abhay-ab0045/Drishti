@@ -1,19 +1,37 @@
-# Node dependencies
+# Node dependencies & package manager logs
 node_modules/
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Build outputs
+# Build outputs & bundles
 **/dist/
 **/dist-demo/
+build/
 
-# Environment secrets
+# Environment secrets (project-wide)
 .env
+.env.*
 .env.local
+!.env.example
+!**/.env.example
+
+# Python virtual environment, bytecode & caches
+backend/venv/
+backend/.venv/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
 
 # OS generated files
 .DS_Store
 Thumbs.db
-# Python virtual environment & cache
-backend/venv/
-backend/__pycache__/
-*.pyc
+Desktop.ini
+
+# IDE & workspace files
+.vscode/
+.idea/
+*.suo
+*.user
