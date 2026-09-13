@@ -1,117 +1,127 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./popup.css" />
   <title>Drishti</title>
 </head>
 <body>
-  <div class="status-strip">
+  <div class="status-strip" id="status-strip">
     <span id="status-dot" class="status-indicator"></span>
     <span id="status-text" class="status-text">IDLE</span>
     <span class="mode-indicator" id="mode-indicator">DOM_ONLY</span>
   </div>
-  
+
   <div class="main-content">
-    <button id="agent-btn" class="scan-btn" style="background: #e67e22; border-color: #d35400;">Run Agent Cycle</button>
+    <!-- Primary action -->
+    <button id="agent-btn" class="scan-btn agent-btn">Run Agent Cycle</button>
+
+    <!-- Scan pipeline -->
     <button id="scan-btn" class="scan-btn">Initiate Scan</button>
     <button id="vision-btn" class="scan-btn vision-btn">Vision Scan</button>
     <button id="pii-btn" class="scan-btn pii-btn">PII Scan</button>
+
+    <!-- Redaction controls -->
     <button id="redact-btn" class="scan-btn redact-btn" disabled>Redact</button>
     <button id="clear-btn" class="scan-btn clear-btn" style="display:none">Clear Redaction</button>
-    
+
+    <!-- DOM Scan results -->
     <div id="results-section" class="results-section" style="display: none;">
       <div class="metric-row">
-        <span class="metric-label">ELEMENTS</span>
+        <span class="metric-label">Elements</span>
         <span id="element-count" class="metric-value">0</span>
       </div>
       <div class="metric-row">
-        <span class="metric-label">FORMS</span>
+        <span class="metric-label">Forms</span>
         <span id="form-count" class="metric-value">0</span>
       </div>
       <div class="metric-row">
-        <span class="metric-label">MEDIA</span>
+        <span class="metric-label">Media</span>
         <span id="media-count" class="metric-value">0</span>
       </div>
       <div class="metric-row">
-        <span class="metric-label">LATENCY</span>
+        <span class="metric-label">Latency</span>
         <span id="latency" class="metric-value">0ms</span>
       </div>
     </div>
 
+    <!-- Vision results -->
     <div id="vision-results" class="results-section" style="display: none;">
-      <div class="section-header">VISION DETECTIONS</div>
+      <div class="section-header">Vision Detections</div>
       <div class="metric-row">
-        <span class="metric-label">FACES</span>
+        <span class="metric-label">Faces</span>
         <span id="face-count" class="metric-value">0</span>
       </div>
       <div class="metric-row">
-        <span class="metric-label">BACKEND</span>
+        <span class="metric-label">Backend</span>
         <span id="vision-backend" class="metric-value">-</span>
       </div>
       <div id="detection-list" class="detection-list"></div>
     </div>
 
+    <!-- PII results -->
     <div id="pii-results" class="results-section" style="display: none;">
-      <div class="section-header">PII DETECTIONS</div>
+      <div class="section-header">PII Detections</div>
       <div class="metric-row">
-        <span class="metric-label">TOTAL</span>
+        <span class="metric-label">Total</span>
         <span id="pii-count" class="metric-value">0</span>
       </div>
       <div class="metric-row">
-        <span class="metric-label">VISUAL</span>
+        <span class="metric-label">Visual</span>
         <span id="pii-visual-status" class="metric-value">-</span>
       </div>
       <div class="metric-row">
-        <span class="metric-label">REDACTED</span>
+        <span class="metric-label">Redacted</span>
         <span id="redact-status" class="metric-value">-</span>
       </div>
       <div id="pii-visual-note" class="pii-visual-note" style="display: none;"></div>
       <div id="pii-detection-list" class="detection-list"></div>
     </div>
-    
-    <button id="telemetry-btn" class="scan-btn" style="background: transparent; border: 1px dashed #555; color: #ccc; margin-top: 10px;">View Telemetry</button>
-    <div id="telemetry-results" class="results-section" style="display: none; border-color: #3498db;">
-      <div class="section-header" style="color: #3498db;">TELEMETRY REPORT</div>
+
+    <!-- Telemetry toggle + panel -->
+    <button id="telemetry-btn" class="scan-btn telemetry-toggle-btn">View Telemetry</button>
+    <div id="telemetry-results" class="results-section telemetry-panel" style="display: none;">
+      <div class="section-header">Telemetry Report</div>
       <div class="metric-row">
-        <span class="metric-label">DOM SCAN</span>
+        <span class="metric-label">DOM Scan</span>
         <span id="tel-dom" class="metric-value">-</span>
       </div>
       <div class="metric-row">
-        <span class="metric-label">VISION</span>
+        <span class="metric-label">Vision</span>
         <span id="tel-vision" class="metric-value">-</span>
       </div>
       <div class="metric-row">
-        <span class="metric-label">REDACTION</span>
+        <span class="metric-label">Redaction</span>
         <span id="tel-redact" class="metric-value">-</span>
       </div>
       <div class="metric-row">
-        <span class="metric-label">CAPTURE</span>
+        <span class="metric-label">Capture</span>
         <span id="tel-capture" class="metric-value">-</span>
       </div>
       <div class="metric-row">
         <span class="metric-label">VLM</span>
         <span id="tel-vlm" class="metric-value">-</span>
       </div>
-      <div class="metric-row" style="border-top: 1px solid #333; padding-top: 6px; margin-top: 4px;">
-        <span class="metric-label" style="color: #fff;">TOTAL LATENCY</span>
-        <span id="tel-total" class="metric-value" style="color: #fff;">-</span>
+      <div class="metric-row telemetry-total-row">
+        <span class="metric-label" style="color: var(--text-primary);">Total Latency</span>
+        <span id="tel-total" class="metric-value" style="color: var(--text-primary);">-</span>
       </div>
-      <div class="metric-row" style="margin-top: 8px;">
-        <span id="tel-redact-status-label" class="metric-label" style="color: #2ecc71;">REDACTION STATUS</span>
-        <span id="tel-redact-status-val" class="metric-value" style="color: #2ecc71;">-</span>
+      <div class="metric-row">
+        <span id="tel-redact-status-label" class="metric-label" style="color: var(--accent-green);">Redaction Status</span>
+        <span id="tel-redact-status-val" class="metric-value" style="color: var(--accent-green);">-</span>
       </div>
     </div>
 
+    <!-- Error panel -->
     <div id="error-section" class="error-section" style="display: none;">
       <pre id="error-details" class="error-details"></pre>
     </div>
   </div>
-  
-  <div class="footer">v0.2.0</div>
-  
+
+  <div class="footer">v0.2.0 // DRISHTI</div>
+
   <script type="module" src="./popup.ts"></script>
 </body>
 </html>

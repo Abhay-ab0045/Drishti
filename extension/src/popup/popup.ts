@@ -1,5 +1,6 @@
 import { MessageEnvelopeSchema } from '../types/schemas';
 
+const statusStrip = document.getElementById('status-strip') as HTMLDivElement;
 const statusDot = document.getElementById('status-dot') as HTMLSpanElement;
 const statusText = document.getElementById('status-text') as HTMLSpanElement;
 const scanBtn = document.getElementById('scan-btn') as HTMLButtonElement;
@@ -52,13 +53,16 @@ function setStatus(state: string, detail?: string): void {
   statusText.textContent = detail ? `${state} — ${detail}` : state;
   statusDot.className = 'status-indicator';
   statusText.className = 'status-text';
+  statusStrip.classList.remove('scanning', 'error');
 
   if (state === 'SCANNING' || state === 'DETECTING' || state === 'REDACTING') {
     statusDot.classList.add('scanning');
     statusText.classList.add('scanning');
+    statusStrip.classList.add('scanning');
   } else if (state === 'ERROR') {
     statusDot.classList.add('error');
     statusText.classList.add('error');
+    statusStrip.classList.add('error');
   }
 }
 
