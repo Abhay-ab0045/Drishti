@@ -380,7 +380,7 @@ chrome.runtime.onMessage.addListener((rawMessage: any, sender, sendResponse) => 
         const base64Image = dataUrl.split(',')[1];
         
         tracker.start('vlm_roundtrip_ms');
-        const apiResponse = await fetch('http://127.0.0.1:8000/api/v1/plan/action', {
+        const apiResponse = await fetch('https://drishti-s696.onrender.com/api/v1/plan/action', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

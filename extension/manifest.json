@@ -15,7 +15,8 @@
     "offscreen"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "<all_urls>",
+    "https://*.vercel.app/*"
   ],
   "background": {
     "service_worker": "src/background/background.ts",
@@ -23,7 +24,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://localhost/*", "*://127.0.0.1/*"],
+      "matches": ["*://localhost/*", "*://127.0.0.1/*", "https://*.vercel.app/*"],
       "js": ["src/content-scripts/content.ts"],
       "run_at": "document_idle"
     }
