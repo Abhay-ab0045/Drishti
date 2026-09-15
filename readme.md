@@ -7,7 +7,7 @@ Client-side privacy preservation and PII redaction engine implemented as a Manif
 
 Experience the Drishti Vision Agent live in under 60 seconds:
 
-1. **Download the Extension:** [Download drishti-v0.2.0.zip](YOUR_GITHUB_RELEASE_LINK_HERE)
+1. **Download the Extension:** [Download drishti-v0.2.0.zip](https://github.com/Shlok82/Drishti/releases/download/v0.2.0/drishti-v0.2.0.zip)
 2. **Unzip:** Extract the downloaded file into a folder.
 3. **Load in Chrome:**
    - Go to `chrome://extensions`
