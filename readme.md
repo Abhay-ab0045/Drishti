@@ -3,7 +3,22 @@
 Client-side privacy preservation and PII redaction engine implemented as a Manifest V3 browser extension with on-device computer vision.
 
 ---
+## 🚀 Quickstart for Judges
 
+Experience the Drishti Vision Agent live in under 60 seconds:
+
+1. **Download the Extension:** [Download drishti-v0.2.0.zip](YOUR_GITHUB_RELEASE_LINK_HERE)
+2. **Unzip:** Extract the downloaded file into a folder.
+3. **Load in Chrome:**
+   - Go to `chrome://extensions`
+   - Enable **Developer mode** (top-right).
+   - Click **Load unpacked** and select the extracted folder.
+4. **Run Live Demo:**
+   - Open our live test portal: **https://drishti-five-kohl.vercel.app**
+   - Click the Drishti extension icon.
+   - Run **PII Scan** to test local redaction, or **Run Agent Cycle** to test the secure VLM planning.
+  
+  
 ## Overview
 
 Drishti provides on-device detection and redaction of Personally Identifiable Information (PII) and facial media within web forms before data leaves the browser client. The architecture executes all inference locally via WebAssembly and WebGPU delegates, ensuring zero data leakage to external inference endpoints.
