@@ -190,6 +190,7 @@ input[type="text"],
 input[type="date"],
 input[type="email"],
 input[type="tel"],
+input[type="password"],
 select,
 textarea {
     padding: 10px;
@@ -199,6 +200,23 @@ textarea {
     background-color: #fafafa;
     transition: border-color 0.3s;
     width: 100%;
+}
+
+.section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--govt-blue);
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ddd;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.field-note {
+    font-weight: 400;
+    font-size: 12px;
+    color: #888;
 }
 
 input:focus, select:focus, textarea:focus {

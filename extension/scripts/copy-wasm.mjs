@@ -84,4 +84,24 @@ if (existsSync(testAssetsSrc)) {
   console.warn('[copy-wasm] ⚠ src/test-assets/ not found');
 }
 
+
+// ===== Extension Icons =====
+const iconSrc = resolve(root, 'assets/icons');
+const iconOut = resolve(dist, 'assets/icons');
+mkdirSync(iconOut, { recursive: true });
+
+if (existsSync(iconSrc)) {
+  const copied = [];
+  for (const f of readdirSync(iconSrc)) {
+    if (f.endsWith('.png')) {
+      copyFileSync(join(iconSrc, f), join(iconOut, f));
+      copied.push(f);
+    }
+  }
+  console.log(`[copy-wasm] Icons: ${copied.length} file(s) → dist/assets/icons/`);
+  copied.forEach((f) => console.log(`  ✓ ${f}`));
+} else {
+  console.warn('[copy-wasm] ⚠ assets/icons/ not found');
+}
+
 console.log('[copy-wasm] Done.');

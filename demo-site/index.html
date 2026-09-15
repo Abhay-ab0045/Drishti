@@ -81,17 +81,32 @@
                 <div class="form-row">
                     <div class="form-group half-width">
                         <label for="aadhaar">Aadhaar Number <span class="required">*</span></label>
-                        <input type="text" name="aadhaar_number" id="aadhaar" placeholder="XXXX XXXX XXXX" autocomplete="off" aria-label="Aadhaar Number" maxlength="14" required>
+                        <input type="text" name="aadhaar_number" id="aadhaar" placeholder="Enter aadhar number" autocomplete="off" aria-label="Aadhaar Number" maxlength="14" required>
                     </div>
                     <div class="form-group half-width">
                         <label for="pan">PAN Number <span class="required">*</span></label>
-                        <input type="text" name="pan_number" id="pan" placeholder="ABCDE1234F" autocomplete="off" aria-label="PAN Card Number" maxlength="10" required>
+                        <input type="text" name="pan_number" id="pan" placeholder="Enter PAN Number" autocomplete="off" aria-label="PAN Card Number" maxlength="10" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="address">Residential Address <span class="required">*</span></label>
                     <textarea id="address" name="address" autocomplete="street-address" rows="4" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Portal Access &amp; Payment Details</h3>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="portal_password">Portal Login Password <span class="required">*</span></label>
+                        <input type="password" id="portal_password" name="portal_password" autocomplete="new-password" placeholder="Enter portal password" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="card_number">Card Number <span class="required">*</span><span class="field-note"> (application fee)</span></label>
+                        <input type="text" id="card_number" name="card_number" autocomplete="cc-number" placeholder="Enter card number" maxlength="19" required>
+                    </div>
                 </div>
             </div>
 

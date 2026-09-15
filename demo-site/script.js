@@ -34,7 +34,9 @@ if (fillBtn) {
       'mobile': '+91 98765 43210',
       'aadhaar_number': '1234 5678 9012',
       'pan_number': 'ABCPS1234D',
-      'address': '42, Sector 15,\nChandigarh, 160015'
+      'address': '42, Sector 15,\nChandigarh, 160015',
+      'portal_password': 'Passw0rd!2026',
+      'card_number': '4111 1111 1111 1111'
     };
     
     for (const [name, value] of Object.entries(fields)) {

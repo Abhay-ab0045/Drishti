@@ -111,6 +111,15 @@ body {
   flex-shrink: 0;
 }
 
+.header-logo {
+  height: 22px;
+  width: auto;
+  flex-shrink: 0;
+  margin-left: auto;
+  opacity: 0.85;
+  /* No background: logo renders directly on the #000000 strip */
+}
+
 /* ===== MAIN CONTENT ===== */
 
 .main-content {

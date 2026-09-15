@@ -497,13 +497,18 @@ async function renderTelemetry() {
       telRedactStatusVal.style.color = '#3498db';
     } else {
       const pct = Math.round(report.redaction_completeness_pct);
-      telRedactStatusVal.textContent = `${pct}% PII Masked (${report.pii_redacted_count}/${report.pii_detected_count})`;
+      // pii_redacted_count = filled fields actually masked
+      // pii_detected_count = all sensitive-type fields found (filled or empty)
+      telRedactStatusVal.textContent = `${report.pii_redacted_count}/${report.pii_detected_count} filled & masked`;
       
       if (pct === 100) {
-        telRedactStatusLabel.style.color = '#2ecc71'; // Green
+        telRedactStatusLabel.style.color = '#2ecc71'; // Green — all filled fields masked
         telRedactStatusVal.style.color = '#2ecc71';
+      } else if (report.pii_redacted_count === 0) {
+        telRedactStatusLabel.style.color = '#3498db'; // Blue — no filled fields to mask
+        telRedactStatusVal.style.color = '#3498db';
       } else {
-        telRedactStatusLabel.style.color = '#e74c3c'; // Red
+        telRedactStatusLabel.style.color = '#e74c3c'; // Red — partial mask
         telRedactStatusVal.style.color = '#e74c3c';
       }
     }

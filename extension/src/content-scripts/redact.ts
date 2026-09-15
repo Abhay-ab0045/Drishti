@@ -127,6 +127,7 @@ export function pixelRedactDataUrl(
 
 export interface RedactionSummary {
   fieldsRedacted: number;
+  fieldsSkippedEmpty: number;
   textsRedacted: number;
   overlaysPlaced: number;
   total: number;
@@ -134,22 +135,42 @@ export interface RedactionSummary {
 
 export function applyRedactions(detections: PIIDetection[]): RedactionSummary {
   ensureStyles();
-  let fieldsRedacted = 0, textsRedacted = 0, overlaysPlaced = 0;
+  let fieldsRedacted = 0, fieldsSkippedEmpty = 0, textsRedacted = 0, overlaysPlaced = 0;
 
   for (const det of detections) {
     if ('domPath' in det.location) {
       const el = resolveElement(det.location.domPath);
       if (!el) { console.warn('[Drishti:Redact] Not found: ' + det.location.domPath); continue; }
-      if (isInputLike(el)) { redactField(el); fieldsRedacted++; }
-      else { redactTextElement(el, det.type); textsRedacted++; }
+
+      if (isInputLike(el)) {
+        // Content-aware gate: only redact fields that are actually populated.
+        // We check .value.length (presence only) — the value itself is never read, logged, or transmitted.
+        const hasContent = (el as HTMLInputElement).value.length > 0;
+        if (hasContent) {
+          redactField(el);
+          fieldsRedacted++;
+        } else {
+          // Empty sensitive field: leave it visible so the VLM can see it needs filling.
+          fieldsSkippedEmpty++;
+          console.log('[Drishti:Redact] Skipped (empty): ' + det.location.domPath);
+        }
+      } else {
+        redactTextElement(el, det.type);
+        textsRedacted++;
+      }
     } else if ('boundingBox' in det.location) {
+      // Face/image overlays are always applied — no "empty" state exists for images.
       redactBoundingBox(det.location.boundingBox);
       overlaysPlaced++;
     }
   }
 
-  console.log('[Drishti:Redact] Applied: ' + fieldsRedacted + ' field(s), ' + textsRedacted + ' text(s), ' + overlaysPlaced + ' overlay(s)');
-  return { fieldsRedacted, textsRedacted, overlaysPlaced, total: fieldsRedacted + textsRedacted + overlaysPlaced };
+  console.log(
+    '[Drishti:Redact] Applied: ' + fieldsRedacted + ' field(s), ' +
+    textsRedacted + ' text(s), ' + overlaysPlaced + ' overlay(s). ' +
+    'Skipped (empty): ' + fieldsSkippedEmpty + ' field(s).'
+  );
+  return { fieldsRedacted, fieldsSkippedEmpty, textsRedacted, overlaysPlaced, total: fieldsRedacted + textsRedacted + overlaysPlaced };
 }
 
 export function removeRedactions(): void {
