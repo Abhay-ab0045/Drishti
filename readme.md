@@ -25,15 +25,20 @@ Drishti provides on-device detection and redaction of Personally Identifiable In
 
 ### Project Roadmap & Current Status
 
+### Project Roadmap & Current Status
+
 * **Phase 1: DOM & Form Inspection (Completed)** — Tree walking, input target mapping, and layout metrics capture.
-* **Phase 2: Local AI & Runtime Setup (Completed)** — Manifest V3 offscreen document orchestration and WebAssembly/ONNX Runtime runtime integration.
+* **Phase 2: Local AI & Runtime Setup (Completed)** — Manifest V3 offscreen document orchestration and WebAssembly/ONNX Runtime integration.
 * **Phase 3: Vision Pipeline (Completed)** — MediaPipe face detection using local `.tflite` model assets via WebGPU/WASM delegates.
 * **Phase 4: Targeted Redaction Engine (Completed)** — Bidirectional message routing, DOM-level visual masking, and dynamic text/canvas obfuscation.
 * **Phase 5: Performance Optimization & Edge Hardening (Completed)** — Streamlining memory consumption, latency reduction, batch DOM modifications, and edge-case validation across diverse form layouts.
 * **Phase 6: Server Contract & Scaffolding (Completed)** — Python FastAPI backend environment setup, routing contracts, and secure credential handling.
 * **Phase 7: VLM Integration (Completed)** — Multimodal Action-Planning Adapter leveraging `gemini-3.1-flash-lite` to reason over pre-redacted DOM screenshots.
-* **Phase 8: Action Execution & Human-in-the-Loop UI Confirmation (In Progress / Active)** — Floating confirmation overlays and secure DOM interaction execution.
-
+* **Phase 8: Action Execution & Human-in-the-Loop UI Confirmation (Completed)** — Floating confirmation overlays, step-by-step reasoning previews, and secure DOM interaction execution.
+* **Phase 9: Self-Benchmarking Harness & Telemetry Dashboard (Completed)** — Latency tracking, local redaction benchmarks, and operational telemetry integration.
+* **Phase 10: Visual Design Polish (Completed)** — Mission-control dark aesthetic pass across popup and modal surfaces.
+* **Phase 11: Production Deployment & Live Demonstration (Completed)** — FastAPI backend hosted on Render (Singapore region), static demo portal hosted on Vercel edge CDN, and 24/7 uptime monitoring configured.
+* **Phase 12: Judge Packaging & Distribution (Completed)** — Production extension bundled into `drishti-v0.2.0.zip` and published via GitHub Releases for evaluator distribution.
 ---
 
 ## Repository Structure
