@@ -380,17 +380,69 @@ chrome.runtime.onMessage.addListener((rawMessage: any, sender, sendResponse) => 
         const base64Image = dataUrl.split(',')[1];
         
         tracker.start('vlm_roundtrip_ms');
-        const apiResponse = await fetch('https://drishti-s696.onrender.com/api/v1/plan/action', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            image_base64: base64Image,
-            task_goal: message.task_goal
-          })
-        });
+        
+        let apiResponse: Response | null = null;
+        let lastError: Error | null = null;
+        const maxRetries = 2;
+        const retryDelays = [3000, 6000];
 
-        if (!apiResponse.ok) {
-          throw new Error(`API error: ${apiResponse.statusText}`);
+        // Trigger 'WAKING SERVER...' if the first attempt takes > 4s
+        const wakingTimer = setTimeout(() => {
+          setState('DETECTING', 'WAKING SERVER...');
+        }, 4000);
+
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 60000);
+
+            apiResponse = await fetch('https://drishti-s696.onrender.com/api/v1/plan/action', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                image_base64: base64Image,
+                task_goal: message.task_goal
+              }),
+              signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (!apiResponse.ok) {
+              throw new Error(`API error: ${apiResponse.status} ${apiResponse.statusText}`);
+            }
+            
+            // Success, break out of loop
+            break;
+          } catch (error: any) {
+            lastError = error;
+            const isNetworkOrTimeout = 
+              error.name === 'AbortError' || 
+              error instanceof TypeError || 
+              (error.message && (error.message.includes('502') || error.message.includes('503') || error.message.includes('504')));
+            
+            if (attempt < maxRetries && isNetworkOrTimeout) {
+              console.log(`[Drishti:BG] VLM fetch attempt ${attempt + 1} failed, retrying in ${retryDelays[attempt]}ms...`);
+              await new Promise(r => setTimeout(r, retryDelays[attempt]));
+            } else {
+              apiResponse = null; // Ensure we fail the check below
+              break;
+            }
+          }
+        }
+        
+        clearTimeout(wakingTimer);
+
+        if (!apiResponse || !apiResponse.ok) {
+           const isNetworkOrTimeout = 
+             lastError?.name === 'AbortError' || 
+             lastError instanceof TypeError ||
+             (lastError?.message && (lastError.message.includes('502') || lastError.message.includes('503') || lastError.message.includes('504')));
+           
+           if (isNetworkOrTimeout) {
+             throw new Error("Server is taking longer than expected to respond. Please try again in a moment.");
+           } else {
+             throw lastError || new Error("Failed to communicate with VLM backend.");
+           }
         }
 
         const plan = await apiResponse.json();
