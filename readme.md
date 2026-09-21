@@ -10,7 +10,7 @@ Experience the Drishti Vision Agent live in under 60 seconds on either Firefox o
 
 ### Option A: Mozilla Firefox (Recommended — 1-Click Install)
 
-1. **Download Signed Add-on**: Click **[Drishti v0.2.0 (.xpi)](https://www.google.com/search?q=https://github.com/Shlok82/Drishti/releases/download/v0.2.0-firefox/4111d396888e467db397-0.2.0.xpi&utm_source=gemini)** directly in Firefox[cite: 16].
+1. **Download Signed Add-on**: Click **[Drishti v0.2.0 (.xpi)](https://github.com/Shlok82/Drishti/releases/download/v0.2.0-firefox/4111d396888e467db397-0.2.0.xpi)** directly in Firefox.
 2. **Confirm Installation**: Firefox will trigger native installation. Click **Add**[cite: 16].
 3. **Run Live Demo**:
 * Open the live test portal: **[https://drishti-five-kohl.vercel.app](https://drishti-five-kohl.vercel.app?utm_source=gemini)**
