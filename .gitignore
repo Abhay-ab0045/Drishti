@@ -43,3 +43,6 @@ temp_*
 update_*.py
 fix_*.py
 write_*.py
+
+#
+PROGRESS.md
