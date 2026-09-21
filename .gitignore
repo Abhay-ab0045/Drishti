@@ -7,8 +7,14 @@ pnpm-debug.log*
 
 # Build outputs & bundles
 **/dist/
+**/dist-*/
 **/dist-demo/
 build/
+
+# Packaged browser extensions & distribution archives
+*.zip
+*.xpi
+*.crx
 
 # Environment secrets (project-wide)
 .env
@@ -44,5 +50,5 @@ update_*.py
 fix_*.py
 write_*.py
 
-#
+# Internal tracking
 PROGRESS.md
