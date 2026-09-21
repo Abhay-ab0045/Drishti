@@ -28,7 +28,9 @@ function setState(state: PipelineState, detail?: string): void {
   }).catch(() => {});
 }
 
-// ===== Offscreen Document Management =====
+// ===== Vision Pipeline Branching =====
+
+import { initPipeline, detectFaces, getActiveBackend } from '../vision/vision-pipeline';
 
 let creatingOffscreen: Promise<void> | null = null;
 
@@ -63,9 +65,15 @@ async function ensureOffscreen(): Promise<void> {
 // ===== Vision Pipeline =====
 
 async function initVisionPipeline(): Promise<{ backend: string; faceDetectorReady: boolean }> {
+  if (typeof chrome.offscreen === 'undefined') {
+    // Firefox: no offscreen, run directly
+    console.log('[Drishti:BG] Firefox detected (no chrome.offscreen). Running initPipeline directly...');
+    return initPipeline();
+  }
+
+  // Chrome: use offscreen
   console.log('[Drishti:BG] initVisionPipeline() called - awaiting ensureOffscreen()');
   await ensureOffscreen();
-  // Give a small 200ms grace period for the offscreen listener to fully register
   await new Promise(r => setTimeout(r, 200));
   console.log('[Drishti:BG] ensureOffscreen() completed. Sending INIT_PIPELINE message via port...');
 
@@ -115,30 +123,41 @@ async function runVisionScan(tabId: number): Promise<{
 
   setState('DETECTING', `Scanning ${payloads.length} elements...`);
 
+  const isFirefox = typeof chrome.offscreen === 'undefined';
+
   // Step 3: Run detection per element
   for (const payload of payloads) {
     console.log(`[Drishti:BG] Scanning element: ${payload.domPath}`);
     try {
-      const visionResponse = await new Promise<any>((resolve, reject) => {
-        const port = chrome.runtime.connect({ name: 'drishti-vision' });
-        const timeout = setTimeout(() => {
-          port.disconnect();
-          reject(new Error('Offscreen worker failed to respond within 15s (DETECT)'));
-        }, 15000);
+      let visionResponse: any;
 
-        port.onMessage.addListener((response) => {
-          clearTimeout(timeout);
-          port.disconnect();
-          resolve(response);
-        });
+      if (isFirefox) {
+        // Direct execution
+        const detections = await detectFaces(payload.dataUrl);
+        visionResponse = { success: true, detections, backend: getActiveBackend() };
+      } else {
+        // Offscreen execution
+        visionResponse = await new Promise<any>((resolve, reject) => {
+          const port = chrome.runtime.connect({ name: 'drishti-vision' });
+          const timeout = setTimeout(() => {
+            port.disconnect();
+            reject(new Error('Offscreen worker failed to respond within 15s (DETECT)'));
+          }, 15000);
 
-        port.postMessage({
-          action: 'DETECT_FACES',
-          imageParams: {
-            dataUrl: payload.dataUrl,
-          },
+          port.onMessage.addListener((response) => {
+            clearTimeout(timeout);
+            port.disconnect();
+            resolve(response);
+          });
+
+          port.postMessage({
+            action: 'DETECT_FACES',
+            imageParams: {
+              dataUrl: payload.dataUrl,
+            },
+          });
         });
-      });
+      }
 
       if (visionResponse?.success && visionResponse.detections) {
         usedBackend = visionResponse.backend;
