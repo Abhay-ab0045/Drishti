@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/copy-wasm.mjs",
+    "build:chrome": "vite build --mode chrome && node scripts/copy-wasm.mjs dist-chrome",
+    "build:firefox": "vite build --mode firefox && node scripts/copy-wasm.mjs dist-firefox",
+    "build": "npm run build:chrome && npm run build:firefox",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -10,7 +10,8 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
-const dist = resolve(root, 'dist');
+const outDirName = process.argv[2] || 'dist-chrome';
+const dist = resolve(root, outDirName);
 
 // ===== ONNX Runtime Web WASM files =====
 const ortDist = resolve(root, 'node_modules/onnxruntime-web/dist');
