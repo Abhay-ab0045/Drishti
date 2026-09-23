@@ -94,3 +94,16 @@ Drishti/
 └── start-demo.bat          # Windows batch script to launch the local demo ecosystem
 
 ```
+
+---
+
+## Contributing
+
+Contributions are welcome! Here's a quick workflow:
+
+1. **Fork** the repository and create a feature branch (`git checkout -b feature/your-feature`).
+2. **Commit** your changes with a clear message (`git commit -m "feat: ..."`).
+3. **Push** to your fork (`git push origin feature/your-feature`).
+4. **Open a pull request** describing what you changed and why.
+
+If you find a bug or have an idea, please file an issue first — it helps coordinate work and avoid duplicated effort.
